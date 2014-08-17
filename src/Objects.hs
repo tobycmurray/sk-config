@@ -30,6 +30,14 @@ data SpecObject =
         cell_rate :: Integer,
         cell_segs :: [SpecObject]
     } -- A component (single ELF file).
+    | Channel {
+        chan_name :: String,
+        chan_from :: String,
+        chan_to :: String,
+        chan_msgsize :: Integer,
+        chan_slots :: Integer,
+        chan_overwrite :: Bool
+    } -- A channel between two cells        
     | UseSegment {
         useseg_name :: String,
         useseg_alias :: String,

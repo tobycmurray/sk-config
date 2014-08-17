@@ -154,6 +154,9 @@ main = do
     debugPutStrLn debug ((show $ length segments) ++ " segments parsed.")
     let cells = map parseCell (getElements layout "cell")
     debugPutStrLn debug ((show $ length cells) ++ " cells parsed.")
+    let channels = map parseChannel (getElements layout "channel")
+    debugPutStrLn debug ((show $ length channels) ++ " channels parsed.")
+    debugPutStrLn debug (show channels)
 
     -- Parse ELF input files into a (Map <cellname>::String <file>::Elf).
     let elfs = M.fromList $ map ((\x -> (fileName x, openElf x)) . opt_filename) $ filter (\x -> case x of

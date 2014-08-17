@@ -25,11 +25,13 @@ module XMLWrapper (readXML,
                    getChildren,
                    parseSegment,
                    parseUseSegment,
-                   parseCell) where
+                   parseCell,
+                   parseChannel) where
 
 import Control.Exception (assert)
 import System.IO
 import Text.XML.Light -- xml
+import Data.Char (toLower)
 
 import qualified Numeric (readHex)
 
@@ -106,3 +108,23 @@ parseUseSegment e = assert (elName e == qname "use-segment")
 parseCell :: Element -> SpecObject
 parseCell e = assert (elName e == qname "cell")
     Cell (getJustAttr e "name") (read $ getJustAttr e "scheduleRate") (map parseUseSegment (getElements e "use-segment"))
+
+parseOverwrite :: String -> Bool
+parseOverwrite s =
+    let s' = map toLower s in
+        if s == "yes" then True
+        else if s == "true" then True
+        else if s == "1" then True
+        else if s == "no" then False
+        else if s == "false" then False
+        else if s == "0" then False
+        else error "Invalid vlue for 'overwrite' attribute"
+
+-- overwrite value is false by default
+parseChannel :: Element -> SpecObject
+parseChannel e =
+    Channel (getJustAttr e "name") (getJustAttr e "from") (getJustAttr e "to")
+            (read $ getJustAttr e "msgsize") (read $ getJustAttr e "slots") 
+            (case getAttr e "overwrite" of Just s -> parseOverwrite s
+                                           Nothing -> False)
+
